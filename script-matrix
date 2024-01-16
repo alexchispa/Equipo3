@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Obtén el nombre del servidor como argumento de línea de comandos
+SERVER_NAME=$1
+
+# Validación para asegurarse de que se proporcionó un nombre de servidor
+if [ -z "$SERVER_NAME" ]; then
+    echo "Error: Proporciona el nombre del servidor como argumento de línea de comandos."
+    exit 1
+fi
+
+# Actualiza el sistema e instala las dependencias necesarias
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y curl wget python3-pip virtualenv
+
+# Instala y configura Synapse (servidor de Matrix)
+sudo pip3 install matrix-synapse
+sudo mkdir -p /etc/matrix-synapse
+sudo chown -R $USER /etc/matrix-synapse
+cd /etc/matrix-synapse
+python3 -m synapse.app.homeserver \
+    --server-name $SERVER_NAME \
+    --config-path homeserver.yaml \
+    --generate-config \
+    --report-stats=no
+
+# Modifica la configuración según tus necesidades
+# Editar el archivo homeserver.yaml según la documentación de Matrix.
+
+# Inicia Synapse
+synctl start
+
+# Configura Nginx como proxy inverso (puedes ajustar esto según tus necesidades)
+sudo apt-get install -y nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+# Crea un archivo de configuración para el sitio de Matrix en Nginx
+sudo tee /etc/nginx/sites-available/matrix <<EOF
+server {
+    listen 80;
+    server_name $SERVER_NAME;
+
+    location / {
+        proxy_pass http://127.0.0.1:8008;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+
+# Crea un enlace simbólico para habilitar el sitio
+sudo ln -s /etc/nginx/sites-available/matrix /etc/nginx/sites-enabled/
+
+# Reinicia Nginx para aplicar los cambios
+sudo systemctl restart nginx
+
+echo "La instalación y configuración de Matrix se ha completado para el servidor $SERVER_NAME."
