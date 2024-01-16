@@ -9,4 +9,4 @@ resources:
 - names: [client, federation]
 compress: false
 enable_registration: false
-registration_shared_secret: "GH7AP4Zcthz02Cmg58sqUgonm7zlwH0f"
+registration_shared_secret: "$generatedKey"
