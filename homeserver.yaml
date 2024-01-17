@@ -1,16 +1,15 @@
-enable_registration: false
 registration_shared_secret: "we228rCyj0jbJF3yANIA5oNXgVLqn2AA"
+enable_registration: false
 listeners:
   - port: 8008
     tls: false
     type: http
     x_forwarded: true
-    bind_addresses: ['127.0.0.1']
+    bind_addresses: ['0.0.0.0']
 
     resources:
       - names: [client, federation]
         compress: false
-
 
 database:
   name: sqlite3
