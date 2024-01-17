@@ -9,7 +9,7 @@ resources:
 - names: [client, federation]
 compress: false
 enable_registration: false
-registration_shared_secret: '$generatedKey'
+registration_shared_secret: "{{GENERATED_KEY_PLACEHOLDER}}"
 
 database:
   name: sqlite3
