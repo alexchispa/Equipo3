@@ -1,22 +1,24 @@
 listeners:
-- port: 8008
-tls: false
-type: http
-x_forwarded: true
-bind_addresses: ['127.0.0.1']
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ['127.0.0.1']
 
 resources:
-- names: [client, federation]
-compress: false
-enable_registration: false
-registration_shared_secret: "{{GENERATED_KEY_PLACEHOLDER}}"
+  - names: [client, federation]
+    compress: false
+    enable_registration: false
+    registration_shared_secret: "we228rCyj0jbJF3yANIA5oNXgVLqn2AA"
 
 database:
   name: sqlite3
   args:
     database: /var/lib/matrix-synapse/homeserver.db
+
 log_config: "/etc/matrix-synapse/log.yaml"
 media_store_path: /var/lib/matrix-synapse/media
 signing_key_path: "/etc/matrix-synapse/homeserver.signing.key"
+
 trusted_key_servers:
-  - server_name: "matrix.org"
+  - server_name: "nginxequipo3.duckdns.org"
