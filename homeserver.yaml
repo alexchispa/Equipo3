@@ -7,9 +7,9 @@ listeners:
     x_forwarded: true
     bind_addresses: ['127.0.0.1']
 
-resources:
-  - names: [client, federation]
-    compress: false
+    resources:
+      - names: [client, federation]
+        compress: false
 
 
 database:
