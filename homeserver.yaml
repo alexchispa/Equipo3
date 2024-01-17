@@ -10,3 +10,13 @@ resources:
 compress: false
 enable_registration: false
 registration_shared_secret: "$generatedKey"
+
+database:
+  name: sqlite3
+  args:
+    database: /var/lib/matrix-synapse/homeserver.db
+log_config: "/etc/matrix-synapse/log.yaml"
+media_store_path: /var/lib/matrix-synapse/media
+signing_key_path: "/etc/matrix-synapse/homeserver.signing.key"
+trusted_key_servers:
+  - server_name: "matrix.org"
