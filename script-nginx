@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo apt update
 
 sudo apt-get install -y curl wget
@@ -21,17 +23,20 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -out /etc/ssl/certs/pruebas-script.crt \
   -subj "/C=ES/ST=Cantabria/L=Santander/O=educantabria/CN=script-pruebas.duckdns.org/emailAddress=ubuntu@gmail.com"
 
-mkdir duckdns
+# Crear carpeta duckdns con los permisos adecuados
+sudo mkdir -m 700 /home/ubuntu/duckdns
 
-cd ./duckdns
+# Establecer el propietario y grupo a ubuntu
+sudo chown ubuntu:ubuntu /home/ubuntu/duckdns
 
-echo 'echo url="https://www.duckdns.org/update?domains=pruebas-script&token=0ab437ea-0827-4075-a780-cc56d2976306&ip=" | curl -k -o ~/duckdns/duck.log -K -' |  tee ./duck.sh
+echo 'echo url="https://www.duckdns.org/update?domains=exampledomain&token=a7c4d0ad-114e-40ef-ba1d-d217904a50f2&ip=" | curl -k -o  /home/ubuntu/duckdns/duck.log -K -' |  tee /home/ubuntu/duckdns/duck.sh
 
-./duck.sh
+chmod 700 /home/ubuntu/duckdns/duck.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/duckdns/duck.sh
 
-chmod 700 duck.sh
+(crontab -u ubuntu -l ; echo "*/5 * * * * /home/ubuntu/duckdns/duck.sh >/dev/null 2>&1") | crontab -u ubuntu -
 
-(crontab -l ; echo "*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1") | crontab -
+/home/ubuntu/duckdns/duck.sh
 
 sudo apt update
 
@@ -90,7 +95,7 @@ sudo ln -s /etc/nginx/sites-available/nginxequipo3 /etc/nginx/sites-enabled/
 sudo nginx -t
 
 sudo systemctl restart nginx
-sudo systemctl status nginx
+# sudo systemctl status nginx
 
 sudo apt update
 
@@ -98,4 +103,4 @@ sudo snap install --classic certbot
 
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
-sudo certbot --nginx -d pruebas-script.dickdns.org
+sudo certbot --nginx -d pruebas-script.duckdns.org --non-interactive --agree-tos --email ubuntu@gmail.com
