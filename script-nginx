@@ -2,8 +2,6 @@ sudo apt update
 
 sudo apt-get install -y curl wget
 
-#sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/pruebas-script.duckdns.org.key -out /etc/ssl/certs/pruebas-script.crt
-
 echo "[req]
 prompt = no
 distinguished_name = dn
@@ -21,57 +19,68 @@ emailAddress = ubuntu
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/ssl/private/pruebas-script.duckdns.org.key \
   -out /etc/ssl/certs/pruebas-script.crt \
-  -config /etc/ssl/openssl.cnf
+  -subj "/C=ES/ST=Cantabria/L=Santander/O=educantabria/CN=script-pruebas.duckdns.org/emailAddress=ubuntu@gmail.com"
 
-sudo mkdir duckdns
+mkdir duckdns
 
 cd ./duckdns
 
-echo 'url="https://www.duckdns.org/update?domains=3team&token=61d376ed-dfe4-4da0-b6ee-31e29bcf59ff&ip=" | curl -k -o ~/duckdns/duck.log -K –' | sudo tee ./duck.sh
+echo 'echo url="https://www.duckdns.org/update?domains=pruebas-script&token=0ab437ea-0827-4075-a780-cc56d2976306&ip=" | curl -k -o ~/duckdns/duck.log -K -' |  tee ./duck.sh
 
-sudo chmod 700 duck.sh
+./duck.sh
 
-echo -e "1\n*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1" | VISUAL=ed sudo crontab -
+chmod 700 duck.sh
+
+(crontab -l ; echo "*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1") | crontab -
 
 sudo apt update
 
 sudo apt install nginx -y
 
 echo 'server {
+    if ($host = pruebas-script.duckdns.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
     if ($host = nginxequipo3.duckdns.org) {
         return 301 https://$host$request_uri;
     } # manejado por Certbot
-    
+
     listen 80;
-    server_name example.com;
+    server_name pruebas-script.duckdns.org;
     return 301 https://$host$request_uri;
-    }
+
+
+}
 
 server {
 listen 443 ssl;
-server_name nginxequipo3.duckdns.org
-    # ssl_certificate /etc/letsencrypt/live/nginxequipo3.duckdns.org/fullchain.pem; # manejado por Certbot
-    # ssl_certificate_key /etc/letsencrypt/live/nginxequipo3.duckdns.org/privkey.pem; # manejado por Certbot
+server_name pruebas-script.duckdns.org;
+    ssl_certificate /etc/ssl/certs/pruebas-script.crt;
+ # manejado por Certbot
+    ssl_certificate_key /etc/ssl/private/pruebas-script.duckdns.org.key; # manejado por Certbot
 
 location /_mtrix {
 proxy_pass http://10.13.2.247:8008;
-        
+
 proxy_set_header X-Forwarded-For $remote_addr;
 client_max_body_size 10M;
 }
-    
+
+
 }
 
 server {
 listen 8443 ssl;
-server_name nginxequipor3.duckdns.org;
+server_name pruebas-script.duckdns.org;
 
-# ssl_certificate /etc/letsencrypt/live/nginxequipo3.duckdns.org/fullchain.pem; # manejado por Certbot
-# ssl_certificate_key /etc/letsencrypt/live/nginxequipo3.duckdns.org/privkey.pem; # manejado por Certbot
-    
+ssl_certificate /etc/ssl/certs/pruebas-script.crt; # manejado por Certbot
+ssl_certificate_key /etc/ssl/private/pruebas-script.duckdns.org.key; # mane>
+
 location /_mtrix {
 proxy_pass http://10.13.2.247:8008;
-        
+
 proxy_set_header X-Forwarded-For $remote_addr;
 client_max_body_size 10M;
 }
