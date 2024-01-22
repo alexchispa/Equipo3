@@ -2,6 +2,8 @@
 
 sudo apt update
 
+sudo hostnamectl set-hostname Matrixequipo3
+
 sudo apt-get install -y curl wget
 
 sudo apt-get install expect -y
