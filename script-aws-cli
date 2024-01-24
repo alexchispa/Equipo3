@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Definir variables
-nombre_vpc="pruebas"
+nombre_vpc="pruebas11"
 cidr_block_vpc="10.0.0.0/16"
 
 # Crear VPC
-vpc_id=$(aws ec2 create-vpc --cidr-block $cidr_block_vpc --query 'Vpc.VpcId' --output text)
+vpc_id=$(aws ec2 create-vpc --cidr-block $cidr_block_vpc --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value='$nombre_vpc'}]' --output json | jq -r '.Vpc.VpcId')
 echo "VPC creada con ID: $vpc_id"
 
 # Habilitar la asignación automática de direcciones IP
@@ -16,22 +16,22 @@ aws ec2 modify-vpc-attribute --vpc-id $vpc_id --enable-dns-hostnames "{\"Value\"
 cidr_block_pub1="10.0.1.0/24"
 cidr_block_pub2="10.0.2.0/24"
 
-subnet_pub1_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_pub1 --availability-zone us-east-1a --query 'Subnet.SubnetId' --output text)
-subnet_pub2_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_pub2 --availability-zone us-east-1b --query 'Subnet.SubnetId' --output text)
+subnet_pub1_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_pub1 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=publica11}]' --output json | jq -r '.Subnet.SubnetId')
+subnet_pub2_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_pub2 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=publica12}]' --output json | jq -r '.Subnet.SubnetId')
 
-echo "Subredes públicas creadas con IDs: $subnet_pub1_id (publica11) y $subnet_pub2_id (publica12)"
+echo "Subredes públicas creadas con IDs: $subnet_pub1_id y $subnet_pub2_id"
 
 # Crear subredes privadas
 cidr_block_priv1="10.0.3.0/24"
 cidr_block_priv2="10.0.4.0/24"
 
-subnet_priv1_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_priv1 --availability-zone us-east-1a --query 'Subnet.SubnetId' --output text)
-subnet_priv2_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_priv2 --availability-zone us-east-1b --query 'Subnet.SubnetId' --output text)
+subnet_priv1_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_priv1 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=privada11}]' --output json | jq -r '.Subnet.SubnetId')
+subnet_priv2_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block $cidr_block_priv2 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=privada12}]' --output json | jq -r '.Subnet.SubnetId')
 
-echo "Subredes privadas creadas con IDs: $subnet_priv1_id (privada11) y $subnet_priv2_id (privada12)"
+echo "Subredes privadas creadas con IDs: $subnet_priv1_id y $subnet_priv2_id"
 
 # Crear tabla de enrutamiento pública
-route_table_pub_id=$(aws ec2 create-route-table --vpc-id $vpc_id --query 'RouteTable.RouteTableId' --output text)
+route_table_pub_id=$(aws ec2 create-route-table --vpc-id $vpc_id --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=publica-route-table}]' --output json | jq -r '.RouteTable.RouteTableId')
 echo "Tabla de enrutamiento pública creada con ID: $route_table_pub_id"
 
 # Asociar tabla de enrutamiento pública con subredes públicas
@@ -39,7 +39,7 @@ aws ec2 associate-route-table --subnet-id $subnet_pub1_id --route-table-id $rout
 aws ec2 associate-route-table --subnet-id $subnet_pub2_id --route-table-id $route_table_pub_id
 
 # Crear gateway de internet
-internet_gateway_id=$(aws ec2 create-internet-gateway --query 'InternetGateway.InternetGatewayId' --output text)
+internet_gateway_id=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=gateway-pruebas11}]' --output json | jq -r '.InternetGateway.InternetGatewayId')
 echo "Gateway de internet creado con ID: $internet_gateway_id"
 
 # Adjuntar gateway de internet a la VPC
@@ -49,7 +49,7 @@ aws ec2 attach-internet-gateway --vpc-id $vpc_id --internet-gateway-id $internet
 aws ec2 create-route --route-table-id $route_table_pub_id --destination-cidr-block 0.0.0.0/0 --gateway-id $internet_gateway_id
 
 # Crear tabla de enrutamiento privada
-route_table_priv_id=$(aws ec2 create-route-table --vpc-id $vpc_id --query 'RouteTable.RouteTableId' --output text)
+route_table_priv_id=$(aws ec2 create-route-table --vpc-id $vpc_id --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=privada-route-table}]' --output json | jq -r '.RouteTable.RouteTableId')
 echo "Tabla de enrutamiento privada creada con ID: $route_table_priv_id"
 
 # Asociar tabla de enrutamiento privada con subredes privadas
