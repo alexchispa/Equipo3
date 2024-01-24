@@ -1,20 +1,20 @@
-registration_shared_secret: "we228rCyj0jbJF3yANIA5oNXgVLqn2AA"
+registration_shared_secret: "{{GENERATED_KEY_PLACEHOLDER}}"
 enable_registration: false
 listeners:
   - port: 8008
     tls: false
     type: http
     x_forwarded: true
-    bind_addresses: ['0.0.0.0']
+    bind_addresses: ['$ip4']
 
     resources:
       - names: [client, federation]
         compress: false
 
-database:
-  name: sqlite3
-  args:
-    database: /var/lib/matrix-synapse/homeserver.db
+# database:
+  # name: sqlite3
+  # args:
+    # database: /var/lib/matrix-synapse/homeserver.db
 
 log_config: "/etc/matrix-synapse/log.yaml"
 media_store_path: /var/lib/matrix-synapse/media
