@@ -56,8 +56,11 @@ echo "Tabla de enrutamiento privada creada con ID: $route_table_priv_id"
 aws ec2 associate-route-table --subnet-id $subnet_priv1_id --route-table-id $route_table_priv_id
 aws ec2 associate-route-table --subnet-id $subnet_priv2_id --route-table-id $route_table_priv_id
 
+# Crear Elastic IP para el Gateway NAT
+nat_eip_allocation_id=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text)
+
 # Crear Gateway NAT para la subred privada12
-nat_gateway_id=$(aws ec2 create-nat-gateway --subnet-id $subnet_priv2_id --output json | jq -r '.NatGateway.NatGatewayId')
+nat_gateway_id=$(aws ec2 create-nat-gateway --subnet-id $subnet_priv2_id --allocation-id $nat_eip_allocation_id --output json | jq -r '.NatGateway.NatGatewayId')
 echo "Gateway NAT creado con ID: $nat_gateway_id"
 
 # Imprimir información final
