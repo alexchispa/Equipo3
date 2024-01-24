@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Definir variables
-nombre_vpc="MiVPC"
+nombre_vpc="pruebas"
 cidr_block_vpc="10.0.0.0/16"
 
 # Crear VPC
