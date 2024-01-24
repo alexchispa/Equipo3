@@ -56,5 +56,9 @@ echo "Tabla de enrutamiento privada creada con ID: $route_table_priv_id"
 aws ec2 associate-route-table --subnet-id $subnet_priv1_id --route-table-id $route_table_priv_id
 aws ec2 associate-route-table --subnet-id $subnet_priv2_id --route-table-id $route_table_priv_id
 
+# Crear Gateway NAT para la subred privada12
+nat_gateway_id=$(aws ec2 create-nat-gateway --subnet-id $subnet_priv2_id --output json | jq -r '.NatGateway.NatGatewayId')
+echo "Gateway NAT creado con ID: $nat_gateway_id"
+
 # Imprimir información final
-echo "VPC con subredes y tablas de enrutamiento creadas exitosamente."
+echo "VPC con subredes, tablas de enrutamiento y Gateway NAT creados exitosamente."
