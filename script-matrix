@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Alejandro Martinez Carcedo
 sudo apt update
 
 sudo hostnamectl set-hostname Matrix215
