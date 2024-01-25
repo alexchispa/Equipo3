@@ -1,4 +1,5 @@
 #!/bin/bash
+# Alejandro Martinez Carcedo
 
 sudo ufw disable
 sudo ufw --force reset
