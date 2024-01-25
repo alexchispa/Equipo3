@@ -1,3 +1,4 @@
+# Alejandro Martinez Carcedo
 server {
     if ($host = pruebas-script.duckdns.org) {
         return 301 https://$host$request_uri;
