@@ -2,7 +2,7 @@
 # Alejandro Martinez Carcedo
 sudo apt update
 
-sudo hostnamectl set-hostname Matrix215
+sudo hostnamectl set-hostname matrixamc
 
 sudo apt-get install -y curl wget
 
@@ -15,7 +15,7 @@ sudo wget -qO /usr/share/keyrings/matrix-org-archive-keyring.gpg https://package
 echo "deb [signed-by=/usr/share/keyrings/matrix-org-archive-keyring.gpg] https://packages.matrix.org/debian/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/matrix-org.list
 
 # Especifica el valor deseado para la ventana emergente
-serverName="matrix215.duckdns.org"
+serverName="matrixamc.duckdns.org"
 
 # Preconfigura debconf con la respuesta deseada
 echo "matrix-synapse matrix-synapse/server-name string ${serverName}" | sudo debconf-set-selections
