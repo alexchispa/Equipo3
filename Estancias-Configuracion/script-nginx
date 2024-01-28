@@ -2,7 +2,7 @@
 # Alejandro Martinez Carcedo
 sudo apt update
 
-sudo hostnamectl set-hostname Nginx215
+sudo hostnamectl set-hostname nginxamc
 
 sudo apt-get install -y curl wget
 
@@ -15,15 +15,15 @@ ST = Cantabria
 L = Santander
 O = educantabria
 OU =
-CN = Nginx215.duckdns.org
+CN = nginxamc.duckdns.org
 emailAddress = ubuntu
 " | sudo tee /etc/ssl/openssl.cnf
 
 # Crear certificado autofirmado
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/ssl/private/nginx215.duckdns.org.key \
-  -out /etc/ssl/certs/nginx215.crt \
-  -subj "/C=ES/ST=Cantabria/L=Santander/O=educantabria/CN=nginx215.duckdns.org/emailAddress=ubuntu@gmail.com"
+  -keyout /etc/ssl/private/nginxamc.duckdns.org.key \
+  -out /etc/ssl/certs/nginxamc.crt \
+  -subj "/C=ES/ST=Cantabria/L=Santander/O=educantabria/CN=nginxamc.duckdns.org/emailAddress=ubuntu@gmail.com"
 
 # Crear carpeta duckdns con los permisos adecuados
 sudo mkdir -m 700 /home/ubuntu/duckdns
@@ -45,17 +45,17 @@ sudo apt update
 sudo apt install nginx -y
 
 echo 'server {
-    if ($host = nginx215.duckdns.org) {
+    if ($host = nginxamc.duckdns.org) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
-    if ($host = nginx215.duckdns.org) {
+    if ($host = nginxamc.duckdns.org) {
         return 301 https://$host$request_uri;
     } # manejado por Certbot
 
     listen 80;
-    server_name nginx215.duckdns.org;
+    server_name nginxamc.duckdns.org;
     return 301 https://$host$request_uri;
 
 
@@ -63,10 +63,10 @@ echo 'server {
 
 server {
 listen 443 ssl;
-server_name nginx215.duckdns.org;
-    ssl_certificate /etc/ssl/certs/nginx215.crt;
+server_name nginxamc.duckdns.org;
+    ssl_certificate /etc/ssl/certs/nginxamc.crt;
  # manejado por Certbot
-    ssl_certificate_key /etc/ssl/private/nginx215.duckdns.org.key; # manejado por Certbot
+    ssl_certificate_key /etc/ssl/private/nginxamc.duckdns.org.key; # manejado por Certbot
 
 location /_mtrix {
 proxy_pass http://10.13.2.247:8008;
@@ -80,10 +80,10 @@ client_max_body_size 10M;
 
 server {
 listen 8443 ssl;
-server_name nginx215.duckdns.org;
+server_name nginxamc.duckdns.org;
 
-ssl_certificate /etc/ssl/certs/nginx215.crt; # manejado por Certbot
-ssl_certificate_key /etc/ssl/private/nginx215.duckdns.org.key; # mane>
+ssl_certificate /etc/ssl/certs/nginxamc.crt; # manejado por Certbot
+ssl_certificate_key /etc/ssl/private/nginxamc.duckdns.org.key; # mane>
 
 location /_mtrix {
 proxy_pass http://10.13.2.247:8008;
@@ -105,4 +105,4 @@ sudo snap install --classic certbot
 
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
-sudo certbot --nginx -d nginx215.duckdns.org --non-interactive --agree-tos --email ubuntu@gmail.com
+sudo certbot --nginx -d nginxamc.duckdns.org --non-interactive --agree-tos --email ubuntu@gmail.com
