@@ -6,6 +6,7 @@ sudo hostnamectl set-hostname nginxamc
 
 sudo apt-get install -y curl wget
 
+# Variables para autorellenar los certificados de ssl
 echo "[req]
 prompt = no
 distinguished_name = dn
@@ -31,19 +32,25 @@ sudo mkdir -m 700 /home/ubuntu/duckdns
 # Establecer el propietario y grupo a ubuntu
 sudo chown ubuntu:ubuntu /home/ubuntu/duckdns
 
+# URL del dominio de duckdns, dado que el dominio no se puede establecer hasta tener una ip pública, es imposible que esta parte se realice con éxito a no ser que el script
+# se use y modifique desoués de crear la instancia, o bien se le asigne una IP pública estática de antemano.
 echo 'echo url="https://www.duckdns.org/update?domains=exampledomain&token=a7c4d0ad-114e-40ef-ba1d-d217904a50f2&ip=" | curl -k -o  /home/ubuntu/duckdns/duck.log -K -' |  tee /home/ubuntu/duckdns/duck.sh
 
+# Cambiar los permisos y propietario del script para que se pueda ejecutar sin necesidad de ser root
 chmod 700 /home/ubuntu/duckdns/duck.sh
-sudo chown ubuntu:ubuntu /home/ubuntu/duckdns/duck.sh
+chown ubuntu:ubuntu /home/ubuntu/duckdns/duck.sh
 
+#Crea una tarea en segundo plano que actualiza el enlace del dominio
 (crontab -u ubuntu -l ; echo "*/5 * * * * /home/ubuntu/duckdns/duck.sh >/dev/null 2>&1") | crontab -u ubuntu -
 
+# Ejecuta el script
 /home/ubuntu/duckdns/duck.sh
 
 sudo apt update
 
 sudo apt install nginx -y
 
+# Configuración de nginx (puede guardarse en otro repositorio como se hizo con la configuración de matrix y extraerlo con wget o similar)
 echo 'server {
     if ($host = nginxamc.duckdns.org) {
         return 301 https://$host$request_uri;
@@ -99,6 +106,8 @@ sudo nginx -t
 sudo systemctl restart nginx
 # sudo systemctl status nginx
 
+# Utilizar certbot para firmar los certificados, puesto que el dominio no se puede establecer con anterioridad como anteriormente explicado, es recomendable
+# realizar el script despues de generar la instancia o bien darle un repaso y actualizarlo a mano despues de haberlo generado
 sudo apt update
 
 sudo snap install --classic certbot
