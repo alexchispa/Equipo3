@@ -34,10 +34,12 @@ sudo systemctl start matrix-synapse
 
 sudo systemctl enable matrix-synapse
 
+# Guarda en una variable automaticamente la key usada en el archivo de configuracion
 generatedKey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
 # Obtén la dirección IP de la instancia de AWS
-ip4=$(curl ifconfig.me)
+# Esta parte era útil cuando matrix todavia se encontraba en la subnet publica para asignarle automaticamente la ip publica
+# ip4=$(curl ifconfig.me)
 
 # Crea y configura el directorio de Synapse
 # sudo mkdir -p /etc/matrix-synapse
